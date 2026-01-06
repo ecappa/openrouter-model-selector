@@ -20,6 +20,10 @@ Ce document décrit comment extraire et publier les packages `@cappasoft-dev/ope
 > Si tu utilises npm, mets une version semver normale (ex: `^0.1.0`) et npm workspaces fera le lien local automatiquement.
 > Le protocole `workspace:` est surtout pour **pnpm/yarn**.
 
+> Note GitHub Packages : les **fine-grained PAT** ne permettent pas l'accès *Packages* dans tous les cas.
+> Pour publier sur GitHub Packages via npm, utilise soit **`GITHUB_TOKEN`** (si ton org autorise `packages:write`),
+> soit un **PAT classic** avec `write:packages` (recommandé via un secret `GITHUB_PACKAGES_TOKEN`).
+
 ## ✅ État actuel (dans ce repo)
 
 - **Déjà fait**:

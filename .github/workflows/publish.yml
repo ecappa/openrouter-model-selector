@@ -36,6 +36,7 @@ jobs:
         env:
           # Use PAT when available (recommended for orgs that restrict GITHUB_TOKEN permissions).
           GITHUB_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
+          # GitHub Packages publish requires either GITHUB_TOKEN with packages:write OR a classic PAT with write:packages.
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_PACKAGES_TOKEN || secrets.GITHUB_TOKEN }}
 
 
