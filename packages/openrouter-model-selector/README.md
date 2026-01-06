@@ -1,6 +1,8 @@
-# @cappasoft/openrouter-model-selector
+# 🤖 @cappasoft/openrouter-model-selector
 
-React UI component for selecting OpenRouter models.
+[![npm version](https://img.shields.io/npm/v/@cappasoft/openrouter-model-selector.svg?style=flat-square)](https://www.npmjs.com/package/@cappasoft/openrouter-model-selector)
+
+A beautiful React component for selecting AI models from [OpenRouter](https://openrouter.ai).
 
 ## Installation
 
@@ -28,4 +30,24 @@ export function App() {
 }
 ```
 
+## Props
 
+| Prop | Type | Description |
+|------|------|-------------|
+| `value` | `string` | Currently selected model ID |
+| `onValueChange` | `(modelId: string) => void` | Callback when model changes |
+| `apiKey` | `string` | Your OpenRouter API key |
+| `placeholder?` | `string` | Placeholder text |
+| `disabled?` | `boolean` | Disable the selector |
+
+## Features
+
+- 🎨 Beautiful UI with dark mode support
+- 🔍 Smart search by name, provider, or capability
+- 📂 Models grouped by provider
+- ⭐ Curated recommended models
+- 🪶 Lightweight and tree-shakeable
+
+## License
+
+MIT
