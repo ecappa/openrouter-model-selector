@@ -1,6 +1,6 @@
 {
   "name": "@cappasoft/openrouter-model-selector",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "React UI component for selecting OpenRouter models",
   "type": "module",
   "main": "./dist/index.js",
