@@ -1,25 +1,26 @@
 {
-    "name": "@cappasoft/openrouter-model-selector-monorepo",
-    "version": "0.0.0",
-    "private": true,
-    "type": "module",
-    "workspaces": [
-      "packages/*"
-    ],
-    "scripts": {
-      "build": "npm run build:headless && npm run build:ui",
-      "build:headless": "npm run build -w @cappasoft/openrouter-models",
-      "build:ui": "npm run build -w @cappasoft/openrouter-model-selector",
-      "changeset": "changeset",
-      "changeset:version": "changeset version",
-      "changeset:publish": "changeset publish",
-      "clean": "rm -rf packages/*/dist",
-      "typecheck": "tsc --noEmit",
-      "publish:local": "npm run build && npm publish -w @cappasoft/openrouter-models --access public && npm publish -w @cappasoft/openrouter-model-selector --access public",
-      "release": "npm run build && npm run changeset:publish"
-    },
-    "devDependencies": {
-      "@changesets/cli": "^2.27.1",
-      "typescript": "^5.8.3"
-    }
+  "name": "@cappasoft/openrouter-model-selector-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build:headless && npm run build:ui",
+    "build:headless": "npm run build -w @cappasoft/openrouter-models",
+    "build:ui": "npm run build -w @cappasoft/openrouter-model-selector",
+    "clean": "rm -rf packages/*/dist",
+    "typecheck": "tsc --noEmit",
+    "version:patch": "npm version patch -w @cappasoft/openrouter-models -w @cappasoft/openrouter-model-selector --no-git-tag-version",
+    "version:minor": "npm version minor -w @cappasoft/openrouter-models -w @cappasoft/openrouter-model-selector --no-git-tag-version",
+    "version:major": "npm version major -w @cappasoft/openrouter-models -w @cappasoft/openrouter-model-selector --no-git-tag-version",
+    "publish:local": "npm run build && npm publish -w @cappasoft/openrouter-models --access public && npm publish -w @cappasoft/openrouter-model-selector --access public",
+    "release:patch": "npm run version:patch && npm run publish:local",
+    "release:minor": "npm run version:minor && npm run publish:local",
+    "release:major": "npm run version:major && npm run publish:local"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
   }
+}
