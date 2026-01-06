@@ -65,6 +65,9 @@ export function App() {
 | `apiKey` | `string` | Your OpenRouter API key |
 | `disabled?` | `boolean` | Disable the selector |
 | `contrast?` | `"default" \| "high-contrast"` | Increase contrast for secondary text (prices, metadata, headers) |
+| `locale?` | `"en" \| "fr"` | UI language (labels + formatting) |
+| `showAllInModal?` | `boolean` | Put the full library in a modal (recommended for large lists) |
+| `infoToggle?` | `boolean` | Adds an “info” button to show the selected model details |
 
 ## 🎨 Styling
 
@@ -78,6 +81,94 @@ import '@cappasoft/openrouter-model-selector/styles.css'
 <div className="dark">
   <ModelSelector ... />
 </div>
+```
+
+## 🧩 Use cases (from the Playground)
+
+### **1) API key from env (recommended for local dev)**
+
+In Vite, expose your key via `VITE_OPENROUTER_API_KEY`:
+
+```bash
+export VITE_OPENROUTER_API_KEY="sk-or-v1-..."
+```
+
+### **2) “Draft + Apply” pattern (avoid spamming API while typing)**
+
+```tsx
+import { useState } from 'react'
+import { ModelSelector } from '@cappasoft/openrouter-model-selector'
+import '@cappasoft/openrouter-model-selector/styles.css'
+
+export function App() {
+  const initialKey = (import.meta as any).env?.VITE_OPENROUTER_API_KEY ?? ''
+  const [apiKeyDraft, setApiKeyDraft] = useState(initialKey)
+  const [apiKey, setApiKey] = useState(initialKey)
+  const [model, setModel] = useState('openai/gpt-4o')
+
+  return (
+    <>
+      <input value={apiKeyDraft} onChange={(e) => setApiKeyDraft(e.target.value)} placeholder="sk-or-v1-..." />
+      <button onClick={() => setApiKey(apiKeyDraft.trim())}>Apply</button>
+      <button onClick={() => { setApiKeyDraft(''); setApiKey('') }}>Clear</button>
+
+      <ModelSelector value={model} onValueChange={setModel} apiKey={apiKey} />
+    </>
+  )
+}
+```
+
+### **3) Locale switch (en/fr)**
+
+```tsx
+<ModelSelector
+  value={model}
+  onValueChange={setModel}
+  apiKey={apiKey}
+  locale="fr"
+/>
+```
+
+### **4) Full library in a modal (best UX for big lists)**
+
+```tsx
+<ModelSelector
+  value={model}
+  onValueChange={setModel}
+  apiKey={apiKey}
+  showAllInModal
+/>
+```
+
+### **5) Toggle model details (info panel)**
+
+```tsx
+<ModelSelector
+  value={model}
+  onValueChange={setModel}
+  apiKey={apiKey}
+  infoToggle
+  showAllInModal
+/>
+```
+
+### **6) Fix low-contrast themes**
+
+```tsx
+<ModelSelector
+  value={model}
+  onValueChange={setModel}
+  apiKey={apiKey}
+  contrast="high-contrast"
+/>
+```
+
+Or via CSS variables (scoped to `.orm-root`):
+
+```css
+.orm-root {
+  --orm-text-secondary: hsl(var(--foreground) / 0.85);
+}
 ```
 
 ## 📚 Headless Usage
