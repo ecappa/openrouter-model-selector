@@ -128,13 +128,12 @@ export function ModelSelector({
 
   const { Button, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } = ui
 
-  if (!apiKey) {
-    return <div className="text-sm text-destructive">OpenRouter API key required</div>
-  }
+  const apiKeyMissing = !apiKey
 
   const { categories, isLoading, isRefreshing, error, refresh, lastUpdated, models, formatPrice } = useOpenRouterModels({
     apiKey,
     endpoint,
+    enabled: !apiKeyMissing,
   })
 
   const [searchQuery, setSearchQuery] = useState("")
@@ -236,6 +235,10 @@ export function ModelSelector({
     { id: "reasoning", label: labels.capabilityReasoning, icon: <Brain className="h-3 w-3" />, color: "text-purple-500 border-purple-500/50 bg-purple-500/10" },
     { id: "cheap", label: labels.capabilityCheap, icon: <DollarSign className="h-3 w-3" />, color: "text-green-500 border-green-500/50 bg-green-500/10" },
   ]
+
+  if (apiKeyMissing) {
+    return <div className="text-sm text-destructive">{labels.apiKeyRequired}</div>
+  }
 
   if (error) {
     return <div className="text-sm text-destructive">Error loading models: {error}</div>

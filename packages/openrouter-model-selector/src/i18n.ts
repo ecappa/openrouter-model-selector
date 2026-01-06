@@ -5,6 +5,7 @@ export interface Labels {
   loading: string
   searchPlaceholder: string
   noResults: string
+  apiKeyRequired: string
   refreshTitle: string
   lastUpdatedPrefix: string
   clearFilters: string
@@ -31,6 +32,7 @@ export const defaultLabelsEN: Labels = {
   loading: "Loading...",
   searchPlaceholder: "Search a model...",
   noResults: "No models found",
+  apiKeyRequired: "OpenRouter API key required",
   refreshTitle: "Refresh model list",
   lastUpdatedPrefix: "Last updated:",
   clearFilters: "Clear filters",
@@ -55,6 +57,7 @@ export const defaultLabelsFR: Labels = {
   loading: "Chargement...",
   searchPlaceholder: "Rechercher un modèle...",
   noResults: "Aucun modèle trouvé",
+  apiKeyRequired: "Clé API OpenRouter requise",
   refreshTitle: "Rafraîchir la liste des modèles",
   lastUpdatedPrefix: "Dernière mise à jour:",
   clearFilters: "Effacer les filtres",

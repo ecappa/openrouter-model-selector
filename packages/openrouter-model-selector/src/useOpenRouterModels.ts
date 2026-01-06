@@ -6,6 +6,7 @@ import { createOpenRouterModelsClient } from "@cappasoft-dev/openrouter-models"
 export interface UseOpenRouterModelsOptions {
   apiKey: string
   endpoint?: string
+  enabled?: boolean
 }
 
 export interface UseOpenRouterModelsResult {
@@ -28,14 +29,15 @@ function formatPriceForUI(pricePerToken: string): string {
 }
 
 export function useOpenRouterModels(options: UseOpenRouterModelsOptions): UseOpenRouterModelsResult {
-  const client: OpenRouterModelsClient = useMemo(
-    () =>
-      createOpenRouterModelsClient({
-        apiKey: options.apiKey,
-        endpoint: options.endpoint,
-      }),
-    [options.apiKey, options.endpoint]
-  )
+  const enabled = options.enabled ?? true
+
+  const client: OpenRouterModelsClient | null = useMemo(() => {
+    if (!enabled) return null
+    return createOpenRouterModelsClient({
+      apiKey: options.apiKey,
+      endpoint: options.endpoint,
+    })
+  }, [enabled, options.apiKey, options.endpoint])
 
   const [models, setModels] = useState<OpenRouterModel[]>([])
   const [categories, setCategories] = useState<ModelCategory[]>([])
@@ -46,6 +48,15 @@ export function useOpenRouterModels(options: UseOpenRouterModelsOptions): UseOpe
 
   const load = useCallback(
     async (force: boolean) => {
+      if (!enabled || !client) {
+        setModels([])
+        setCategories([])
+        setLastUpdated(null)
+        setError(null)
+        setIsLoading(false)
+        setIsRefreshing(false)
+        return
+      }
       setError(null)
       if (force) setIsRefreshing(true)
       setIsLoading(true)
@@ -61,7 +72,7 @@ export function useOpenRouterModels(options: UseOpenRouterModelsOptions): UseOpe
         setIsRefreshing(false)
       }
     },
-    [client]
+    [enabled, client]
   )
 
   useEffect(() => {

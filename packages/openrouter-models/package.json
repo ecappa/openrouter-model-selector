@@ -1,7 +1,7 @@
 {
   "name": "@cappasoft-dev/openrouter-models",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
+  "description": "Headless client for fetching and managing OpenRouter models",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -11,7 +11,24 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "keywords": ["openrouter", "llm", "models", "api"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cappasoft-dev/openrouter-model-selector.git",
+    "directory": "packages/openrouter-models"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.8.3"
   }
 }
-
-
