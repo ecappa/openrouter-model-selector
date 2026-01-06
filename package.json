@@ -14,7 +14,9 @@
       "changeset:version": "changeset version",
       "changeset:publish": "changeset publish",
       "clean": "rm -rf packages/*/dist",
-      "typecheck": "tsc --noEmit"
+      "typecheck": "tsc --noEmit",
+      "publish:local": "npm run build && npm publish -w @cappasoft/openrouter-models --access public && npm publish -w @cappasoft/openrouter-model-selector --access public",
+      "release": "npm run build && npm run changeset:publish"
     },
     "devDependencies": {
       "@changesets/cli": "^2.27.1",
