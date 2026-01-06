@@ -7,13 +7,14 @@ type Locale = 'en' | 'fr'
 
 export default function App() {
   // Use a draft input so we don't spam the API while the user is typing/pasting the key.
-  const initialKey = (import.meta.env as any).VITE_OPENROUTER_API_KEY ?? ''
+  const initialKey = (import.meta as any).env?.VITE_OPENROUTER_API_KEY ?? ''
   const [apiKeyDraft, setApiKeyDraft] = useState<string>(initialKey)
   const [apiKey, setApiKey] = useState<string>(initialKey)
   const [model, setModel] = useState<string>('openai/gpt-4o')
   const [locale, setLocale] = useState<Locale>('en')
   const [showAllInModal, setShowAllInModal] = useState(true)
   const [infoToggle, setInfoToggle] = useState(true)
+  const [highContrast, setHighContrast] = useState(false)
 
   const masked = useMemo(() => {
     if (!apiKey) return ''
@@ -43,6 +44,10 @@ export default function App() {
           <label className="label checkbox">
             <input type="checkbox" checked={infoToggle} onChange={(e) => setInfoToggle(e.target.checked)} />
             infoToggle
+          </label>
+          <label className="label checkbox">
+            <input type="checkbox" checked={highContrast} onChange={(e) => setHighContrast(e.target.checked)} />
+            highContrast
           </label>
         </div>
       </header>
@@ -91,6 +96,7 @@ export default function App() {
             locale={locale}
             showAllInModal={showAllInModal}
             infoToggle={infoToggle}
+            contrast={highContrast ? 'high-contrast' : 'default'}
           />
         </div>
         <div className="result">

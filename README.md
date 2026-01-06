@@ -63,8 +63,8 @@ export function App() {
 | `value` | `string` | Currently selected model ID |
 | `onValueChange` | `(modelId: string) => void` | Callback when model changes |
 | `apiKey` | `string` | Your OpenRouter API key |
-| `placeholder?` | `string` | Placeholder text (default: "Select a model") |
 | `disabled?` | `boolean` | Disable the selector |
+| `contrast?` | `"default" \| "high-contrast"` | Increase contrast for secondary text (prices, metadata, headers) |
 
 ## 🎨 Styling
 

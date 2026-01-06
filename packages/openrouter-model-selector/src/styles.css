@@ -50,4 +50,46 @@
   }
 }
 
+/* OpenRouter Model Selector theming + accessibility hooks */
+@layer base {
+  /**
+   * `.orm-root` is applied to the Radix portal content (SelectContent/DialogContent)
+   * so these vars/styles work even when the component is rendered in a Portal.
+   */
+  .orm-root {
+    /* Text colors (override-friendly) */
+    --orm-text-primary: hsl(var(--foreground));
+    --orm-text-secondary: hsl(var(--foreground) / 0.72);
+    --orm-text-muted: hsl(var(--foreground) / 0.6);
+  }
+
+  /* Higher contrast for prices/metadata (WCAG-friendly) */
+  .orm-contrast-high {
+    --orm-text-secondary: hsl(var(--foreground) / 0.85);
+    --orm-text-muted: hsl(var(--foreground) / 0.75);
+  }
+}
+
+@layer components {
+  /* Utility-like classes (stable targets for consumer overrides) */
+  .orm-text-secondary {
+    color: var(--orm-text-secondary);
+  }
+
+  .orm-model-name {
+    color: var(--orm-text-primary);
+  }
+
+  .orm-model-desc,
+  .orm-last-updated,
+  .orm-no-results {
+    color: var(--orm-text-secondary);
+  }
+
+  .orm-section-title {
+    color: hsl(var(--foreground) / 0.8);
+    letter-spacing: -0.01em;
+  }
+}
+
 

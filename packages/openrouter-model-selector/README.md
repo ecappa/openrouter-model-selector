@@ -37,8 +37,29 @@ export function App() {
 | `value` | `string` | Currently selected model ID |
 | `onValueChange` | `(modelId: string) => void` | Callback when model changes |
 | `apiKey` | `string` | Your OpenRouter API key |
-| `placeholder?` | `string` | Placeholder text |
 | `disabled?` | `boolean` | Disable the selector |
+| `contrast?` | `"default" \| "high-contrast"` | Increase contrast for secondary text (prices, metadata, headers) |
+
+## Customization (contrast)
+
+If your app theme makes secondary text too light, prefer using `contrast="high-contrast"`:
+
+```tsx
+<ModelSelector
+  value={model}
+  onValueChange={setModel}
+  apiKey="sk-or-v1-..."
+  contrast="high-contrast"
+/>
+```
+
+You can also override the exposed CSS variables (scoped to `.orm-root`):
+
+```css
+.orm-root {
+  --orm-text-secondary: hsl(var(--foreground) / 0.85);
+}
+```
 
 ## Features
 

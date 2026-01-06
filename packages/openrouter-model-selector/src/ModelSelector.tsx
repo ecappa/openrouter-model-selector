@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react"
+import type * as React from "react"
 import { Brain, DollarSign, Info, Loader2, Search, Settings2, Sparkles, X, Zap } from "lucide-react"
 
 import type { OpenRouterModel } from "@cappasoft/openrouter-models"
@@ -55,6 +56,12 @@ export interface ModelSelectorProps {
   showSearch?: boolean
   showPricing?: boolean
   showFilters?: boolean
+  /**
+   * Contrast mode for accessibility.
+   * - default: uses softer secondary text
+   * - high-contrast: increases contrast for secondary text (prices, metadata, headers)
+   */
+  contrast?: "default" | "high-contrast"
   variant?: "default" | "compact"
 
   // Advanced layout
@@ -105,6 +112,7 @@ export function ModelSelector({
   showSearch = true,
   showPricing = true,
   showFilters = true,
+  contrast = "default",
   variant = "default",
   showAllInModal = false,
   infoToggle = false,
@@ -143,6 +151,7 @@ export function ModelSelector({
   const [showInfo, setShowInfo] = useState(false)
 
   const hasActiveFilters = providerFilter !== null || capabilityFilter !== null || searchQuery.trim() !== ""
+  const contrastClass = contrast === "high-contrast" ? "orm-contrast-high" : "orm-contrast-default"
 
   const clearFilters = () => {
     setSearchQuery("")
@@ -245,7 +254,7 @@ export function ModelSelector({
   }
 
   const renderFullSelector = () => (
-    <div className="space-y-4">
+    <div className={cn("space-y-4 orm-root", contrastClass)}>
       <div className="space-y-2">
         {(showSearch || showFilters) && (
           <div className="space-y-2">
@@ -284,7 +293,10 @@ export function ModelSelector({
                       key={filter.id}
                       variant="outline"
                       size="sm"
-                      className={cn("h-6 px-2 text-xs border", capabilityFilter === filter.id ? filter.color : "text-muted-foreground")}
+                      className={cn(
+                        "h-6 px-2 text-xs border",
+                        capabilityFilter === filter.id ? filter.color : "text-foreground/70 orm-text-secondary"
+                      )}
                       onClick={() => setCapabilityFilter(capabilityFilter === filter.id ? null : filter.id)}
                     >
                       {filter.icon}
@@ -297,7 +309,7 @@ export function ModelSelector({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+                    className="h-6 px-2 text-xs text-foreground/70 orm-text-secondary hover:text-foreground"
                     onClick={clearFilters}
                   >
                     <X className="h-3 w-3 mr-1" />
@@ -311,11 +323,13 @@ export function ModelSelector({
 
         <div className="h-[400px] overflow-y-auto border rounded-md p-2">
           {filteredCategories.length === 0 ? (
-            <div className="p-4 text-center text-sm text-muted-foreground">{labels.noResults}</div>
+            <div className="p-4 text-center text-sm text-foreground/70 orm-text-secondary orm-no-results">{labels.noResults}</div>
           ) : (
             filteredCategories.map((category) => (
               <div key={category.name} className="mb-4 last:mb-0">
-                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted/50 mb-1 rounded">{category.name}</div>
+                <div className="px-2 py-1.5 text-xs font-semibold text-foreground/80 orm-section-title bg-muted/50 mb-1 rounded">
+                  {category.name}
+                </div>
                 <div className="grid grid-cols-1 gap-1">
                   {category.models.map((model) => {
                     const badge = getModelBadge(model)
@@ -333,7 +347,7 @@ export function ModelSelector({
                         }}
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-medium text-sm">{model.name}</span>
+                          <span className="font-medium text-sm orm-model-name">{model.name}</span>
                           {badge && (
                             <span className={cn("text-[10px] px-1.5 py-0.5 rounded-full flex items-center gap-1", badge.color, badge.bgColor)}>
                               {badge.icon}
@@ -341,7 +355,7 @@ export function ModelSelector({
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-1">
+                        <div className="flex items-center gap-2 text-[10px] text-foreground/70 orm-text-secondary orm-model-desc mt-1">
                           <span>{formatContextLength(model.context_length)} context</span>
                           {showPricing && <span>•</span>}
                           {showPricing && <span>{fmtPrice(model.pricing.prompt)}</span>}
@@ -360,7 +374,7 @@ export function ModelSelector({
 
   if (showAllInModal) {
     return (
-      <div className={cn("space-y-2", className)}>
+      <div className={cn("space-y-2 orm-root", contrastClass, className)}>
         <div className="flex items-center gap-2">
           <Select value={value} onValueChange={onValueChange} disabled={disabled || isLoading}>
             <SelectTrigger className="flex-1 text-left">
@@ -373,7 +387,7 @@ export function ModelSelector({
                 <SelectValue placeholder={labels.placeholder}>
                   {selectedModel && (
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="truncate font-medium">{selectedModel.name}</span>
+                      <span className="truncate font-medium orm-model-name">{selectedModel.name}</span>
                       {getModelBadge(selectedModel) && (
                         <Zap className={cn("h-3 w-3 shrink-0", getModelBadge(selectedModel)!.color.split(" ")[0])} />
                       )}
@@ -385,10 +399,10 @@ export function ModelSelector({
             <SelectContent>
               {commonModels?.map((model) => (
                 <SelectItem key={model.id} value={model.id}>
-                  <span className="font-medium">{model.name}</span>
+                  <span className="font-medium orm-model-name">{model.name}</span>
                 </SelectItem>
               ))}
-              {!commonModels?.length && !isLoading && <div className="p-2 text-xs text-muted-foreground">{labels.noResults}</div>}
+              {!commonModels?.length && !isLoading && <div className="p-2 text-xs text-foreground/70 orm-text-secondary">{labels.noResults}</div>}
             </SelectContent>
           </Select>
 
@@ -398,7 +412,7 @@ export function ModelSelector({
                 <Settings2 className="h-4 w-4" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[85vh]">
+            <DialogContent className={cn("max-w-2xl max-h-[85vh] orm-root", contrastClass, "orm-dialog")}>
               <DialogHeader>
                 <DialogTitle>{labels.libraryTitle}</DialogTitle>
               </DialogHeader>
@@ -420,7 +434,7 @@ export function ModelSelector({
         </div>
 
         {infoToggle && showInfo && selectedModel && (
-          <div className="text-xs text-muted-foreground p-2 bg-muted/30 rounded-md border mt-2 animate-in slide-in-from-top-1 fade-in duration-200">
+          <div className="text-xs text-foreground/70 orm-text-secondary p-2 bg-muted/30 rounded-md border mt-2 animate-in slide-in-from-top-1 fade-in duration-200">
             <div className="font-medium text-foreground mb-1">{labels.modelDetailsTitle}</div>
             {selectedModel.description ? <p className="mb-2">{selectedModel.description}</p> : <p className="mb-2 italic">{labels.noDescription}</p>}
             <div className="flex flex-wrap gap-2 text-[10px]">
@@ -435,7 +449,7 @@ export function ModelSelector({
   }
 
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={cn("space-y-2 orm-root", contrastClass, className)}>
       <Select value={value} onValueChange={onValueChange} disabled={disabled || isLoading}>
         <SelectTrigger className={cn(variant === "compact" && "h-8 text-sm")}>
           {isLoading ? (
@@ -447,7 +461,7 @@ export function ModelSelector({
             <SelectValue placeholder={labels.placeholder}>
               {selectedModel && (
                 <div className="flex items-center gap-2">
-                  <span>{selectedModel.name}</span>
+                  <span className="orm-model-name">{selectedModel.name}</span>
                   {getModelBadge(selectedModel) && (
                     <span className={cn("flex items-center gap-0.5 text-xs", getModelBadge(selectedModel)!.color)}>{getModelBadge(selectedModel)!.icon}</span>
                   )}
@@ -456,7 +470,7 @@ export function ModelSelector({
             </SelectValue>
           )}
         </SelectTrigger>
-        <SelectContent className="max-h-[500px] min-w-[var(--radix-select-trigger-width)] w-full">
+        <SelectContent className={cn("max-h-[500px] min-w-[var(--radix-select-trigger-width)] w-full orm-root", contrastClass, "orm-select-content")}>
           <div className="p-2 border-b space-y-2">
             <div className="flex items-start justify-between gap-2">
               <div className="grid w-full gap-1 grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
@@ -490,7 +504,7 @@ export function ModelSelector({
               </Button>
             </div>
             {lastUpdated && (
-              <div className="text-[11px] text-muted-foreground">
+              <div className="text-[11px] text-foreground/70 orm-text-secondary orm-last-updated">
                 {labels.lastUpdatedPrefix}{" "}
                 {new Date(lastUpdated).toLocaleTimeString(locale === "fr" ? "fr-FR" : "en-US")}
               </div>
@@ -539,7 +553,10 @@ export function ModelSelector({
                         key={filter.id}
                         variant="outline"
                         size="sm"
-                        className={cn("h-6 px-2 text-xs border", capabilityFilter === filter.id ? filter.color : "text-muted-foreground")}
+                        className={cn(
+                          "h-6 px-2 text-xs border",
+                          capabilityFilter === filter.id ? filter.color : "text-foreground/70 orm-text-secondary"
+                        )}
                         onClick={(e: any) => {
                           e.stopPropagation()
                           setCapabilityFilter(capabilityFilter === filter.id ? null : filter.id)
@@ -555,7 +572,7 @@ export function ModelSelector({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+                      className="h-6 px-2 text-xs text-foreground/70 orm-text-secondary hover:text-foreground"
                       onClick={(e: any) => {
                         e.stopPropagation()
                         clearFilters()
@@ -572,11 +589,11 @@ export function ModelSelector({
 
           <div className="max-h-[300px] overflow-y-auto">
             {filteredCategories.length === 0 ? (
-              <div className="p-4 text-center text-sm text-muted-foreground">{labels.noResults}</div>
+              <div className="p-4 text-center text-sm text-foreground/70 orm-text-secondary orm-no-results">{labels.noResults}</div>
             ) : (
               filteredCategories.map((category) => (
                 <div key={category.name}>
-                  <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted/50 sticky top-0">
+                  <div className="px-2 py-1.5 text-xs font-semibold text-foreground/80 orm-section-title bg-muted/50 sticky top-0">
                     {category.name}
                   </div>
                   {category.models.map((model) => {
@@ -585,7 +602,7 @@ export function ModelSelector({
                       <SelectItem key={model.id} value={model.id} className="py-2">
                         <div className="flex flex-col gap-0.5">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium">{model.name}</span>
+                            <span className="font-medium orm-model-name">{model.name}</span>
                             {badge && (
                               <span className={cn("flex items-center gap-0.5 text-xs", badge.color)}>
                                 {badge.icon}
@@ -593,7 +610,7 @@ export function ModelSelector({
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-2 text-xs text-foreground/70 orm-text-secondary orm-model-desc">
                             <span>{formatContextLength(model.context_length)}</span>
                             {showPricing && (
                               <>
@@ -614,7 +631,7 @@ export function ModelSelector({
       </Select>
 
       {variant === "default" && selectedModel && (
-        <div className="text-xs text-muted-foreground">{selectedModel.description && <p className="line-clamp-2">{selectedModel.description}</p>}</div>
+        <div className="text-xs text-foreground/70 orm-text-secondary">{selectedModel.description && <p className="line-clamp-2">{selectedModel.description}</p>}</div>
       )}
     </div>
   )
@@ -630,7 +647,8 @@ export function ModelSelectorCompact({
   components,
   className,
   disabled = false,
-}: Pick<ModelSelectorProps, "value" | "onValueChange" | "apiKey" | "endpoint" | "locale" | "labels" | "components" | "className" | "disabled">) {
+  contrast,
+}: Pick<ModelSelectorProps, "value" | "onValueChange" | "apiKey" | "endpoint" | "locale" | "labels" | "components" | "className" | "disabled" | "contrast">) {
   return (
     <ModelSelector
       value={value}
@@ -642,6 +660,7 @@ export function ModelSelectorCompact({
       components={components}
       className={className}
       disabled={disabled}
+      contrast={contrast}
       showSearch={false}
       showPricing={false}
       variant="compact"
