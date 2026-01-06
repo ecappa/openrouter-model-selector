@@ -1,6 +1,6 @@
 # Playground (Vite + React)
 
-Petit projet de test pour valider manuellement `@cappasoft-dev/openrouter-model-selector` avant publication.
+Petit projet de test pour valider manuellement `@cappasoft/openrouter-model-selector` avant publication.
 
 ## Setup
 
