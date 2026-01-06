@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from "react"
 import { Brain, DollarSign, Info, Loader2, Search, Settings2, Sparkles, X, Zap } from "lucide-react"
 
-import type { OpenRouterModel } from "@cappasoft-dev/openrouter-models"
-import { RECOMMENDED_MODELS } from "@cappasoft-dev/openrouter-models"
+import type { OpenRouterModel } from "@cappasoft/openrouter-models"
+import { RECOMMENDED_MODELS } from "@cappasoft/openrouter-models"
 
 import { cn } from "./utils"
 import type { Labels, Locale } from "./i18n"

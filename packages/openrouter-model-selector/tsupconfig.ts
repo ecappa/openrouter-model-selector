@@ -8,5 +8,5 @@ export default defineConfig({
   clean: true,
   treeshake: true,
   splitting: false,
-  external: ['react', 'react-dom', '@cappasoft-dev/openrouter-models'],
+  external: ['react', 'react-dom', '@cappasoft/openrouter-models'],
 })

@@ -4,21 +4,21 @@ React UI component for selecting and managing OpenRouter AI models with a headle
 
 ## Packages
 
-- [`@cappasoft-dev/openrouter-models`](./packages/openrouter-models) - Headless client for fetching models
-- [`@cappasoft-dev/openrouter-model-selector`](./packages/openrouter-model-selector) - React UI component
+- [`@cappasoft/openrouter-models`](./packages/openrouter-models) - Headless client for fetching models
+- [`@cappasoft/openrouter-model-selector`](./packages/openrouter-model-selector) - React UI component
 
 ## Installation
 
 ```bash
-npm install @cappasoft-dev/openrouter-model-selector
+npm install @cappasoft/openrouter-model-selector
 ```
 
 ## Quick Start
 
 ```tsx
 import { useState } from 'react'
-import { ModelSelector } from '@cappasoft-dev/openrouter-model-selector'
-import '@cappasoft-dev/openrouter-model-selector/styles.css'
+import { ModelSelector } from '@cappasoft/openrouter-model-selector'
+import '@cappasoft/openrouter-model-selector/styles.css'
 
 export function App() {
   const [model, setModel] = useState('openai/gpt-4o')

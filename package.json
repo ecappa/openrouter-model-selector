@@ -1,5 +1,5 @@
 {
-    "name": "@cappasoft-dev/openrouter-model-selector-monorepo",
+    "name": "@cappasoft/openrouter-model-selector-monorepo",
     "version": "0.0.0",
     "private": true,
     "type": "module",
@@ -8,8 +8,8 @@
     ],
     "scripts": {
       "build": "npm run build:headless && npm run build:ui",
-      "build:headless": "npm run build -w @cappasoft-dev/openrouter-models",
-      "build:ui": "npm run build -w @cappasoft-dev/openrouter-model-selector",
+      "build:headless": "npm run build -w @cappasoft/openrouter-models",
+      "build:ui": "npm run build -w @cappasoft/openrouter-model-selector",
       "changeset": "changeset",
       "changeset:version": "changeset version",
       "changeset:publish": "changeset publish",

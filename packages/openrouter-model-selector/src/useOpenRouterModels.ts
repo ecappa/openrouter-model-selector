@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 
-import type { ModelCategory, OpenRouterModel, OpenRouterModelsClient } from "@cappasoft-dev/openrouter-models"
-import { createOpenRouterModelsClient } from "@cappasoft-dev/openrouter-models"
+import type { ModelCategory, OpenRouterModel, OpenRouterModelsClient } from "@cappasoft/openrouter-models"
+import { createOpenRouterModelsClient } from "@cappasoft/openrouter-models"
 
 export interface UseOpenRouterModelsOptions {
   apiKey: string

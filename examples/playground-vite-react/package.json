@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@cappasoft-dev/openrouter-model-selector": "file:../../packages/openrouter-model-selector",
+    "@cappasoft/openrouter-model-selector": "file:../../packages/openrouter-model-selector",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

@@ -1,9 +1,11 @@
-name: Release (Changesets) + Publish (GitHub Packages)
+name: Release & Publish
 
 on:
   push:
     branches:
       - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
@@ -11,82 +13,25 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-      packages: write
-    env:
-      # Used by `gh` for PR creation/updating.
-      GH_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
-      # Used by npm to publish to GitHub Packages (requires a classic PAT in orgs where GITHUB_TOKEN is read-only).
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN || secrets.GITHUB_TOKEN }}
     steps:
-      - name: Checkout (no external actions)
-        shell: bash
-        run: |
-          set -euo pipefail
+      - uses: actions/checkout@v4
 
-          echo "Repo: ${GITHUB_REPOSITORY}"
-          echo "SHA:  ${GITHUB_SHA}"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
 
-          git --version
-          node --version
-          npm --version
-          gh --version
+      - run: npm ci
+      - run: npm run build
+      - run: npm run typecheck
 
-          cd "${GITHUB_WORKSPACE}"
-          rm -rf .git
-          git init -q
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          # Use GH_TOKEN if present; fall back to GITHUB_TOKEN. Both are injected by GitHub Actions.
-          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git fetch --depth=1 origin "${GITHUB_SHA}"
-          git checkout -f FETCH_HEAD
-
-      - name: Install
-        run: npm ci
-
-      - name: Build + typecheck
-        run: npm run build && npm run typecheck
-
-      - name: Release PR or Publish
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          # If there are pending changesets, open/update a release PR.
-          # When a release PR is merged, there will be no changeset files and we can publish.
-          if ls .changeset/*.md >/dev/null 2>&1; then
-            if ls .changeset/*.md | grep -vqE '/README\.md$'; then
-              echo "Changesets detected → creating/updating release PR"
-              branch="changeset-release/main"
-
-              git checkout -B "$branch"
-              npm run changeset -- version
-
-              if ! git diff --quiet; then
-                git add -A
-                git commit -m "chore: version packages"
-              fi
-
-              git push -f origin "$branch"
-
-              # Create PR if it doesn't exist.
-              pr_number="$(gh pr list --head "$branch" --base main --state open --json number --jq '.[0].number' || true)"
-              if [ -n "${pr_number:-}" ]; then
-                echo "Release PR already exists: #${pr_number}"
-              else
-                gh pr create \
-                  --title "chore: release" \
-                  --body "Automated release PR generated from Changesets." \
-                  --base main \
-                  --head "$branch"
-              fi
-
-              exit 0
-            fi
-          fi
-
-          echo "No changesets → publishing packages"
-          npm run changeset:publish
-
-
+      - name: Create Release PR or Publish
+        uses: changesets/action@v1
+        with:
+          publish: npm run changeset:publish
+          version: npm run changeset:version
+          title: 'chore: release'
+          commit: 'chore: version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

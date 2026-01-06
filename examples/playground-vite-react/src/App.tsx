@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 
-import { ModelSelector } from '@cappasoft-dev/openrouter-model-selector'
-import '@cappasoft-dev/openrouter-model-selector/styles.css'
+import { ModelSelector } from '@cappasoft/openrouter-model-selector'
+import '@cappasoft/openrouter-model-selector/styles.css'
 
 type Locale = 'en' | 'fr'
 

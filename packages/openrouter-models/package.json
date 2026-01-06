@@ -1,5 +1,5 @@
 {
-  "name": "@cappasoft-dev/openrouter-models",
+  "name": "@cappasoft/openrouter-models",
   "version": "0.1.0",
   "description": "Headless client for fetching and managing OpenRouter models",
   "type": "module",
@@ -23,7 +23,7 @@
   "keywords": ["openrouter", "llm", "models", "api"],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cappasoft-dev/openrouter-model-selector.git",
+    "url": "git+https://github.com/ecappa/openrouter-model-selector.git",
     "directory": "packages/openrouter-models"
   },
   "license": "MIT",

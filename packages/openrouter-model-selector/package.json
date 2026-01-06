@@ -1,5 +1,5 @@
 {
-  "name": "@cappasoft-dev/openrouter-model-selector",
+  "name": "@cappasoft/openrouter-model-selector",
   "version": "0.1.0",
   "description": "React UI component for selecting OpenRouter models",
   "type": "module",
@@ -25,7 +25,7 @@
   "keywords": ["openrouter", "llm", "models", "react", "ui", "component"],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cappasoft-dev/openrouter-model-selector.git",
+    "url": "git+https://github.com/ecappa/openrouter-model-selector.git",
     "directory": "packages/openrouter-model-selector"
   },
   "license": "MIT",
@@ -34,7 +34,7 @@
     "react-dom": "^18.0.0"
   },
   "dependencies": {
-    "@cappasoft-dev/openrouter-models": "^0.1.0",
+    "@cappasoft/openrouter-models": "^0.1.0",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.3",
