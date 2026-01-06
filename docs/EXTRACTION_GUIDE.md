@@ -22,7 +22,7 @@ Ce document décrit comment extraire et publier les packages `@cappasoft-dev/ope
 
 > Note GitHub Packages : les **fine-grained PAT** ne permettent pas l'accès *Packages* dans tous les cas.
 > Pour publier sur GitHub Packages via npm, utilise soit **`GITHUB_TOKEN`** (si ton org autorise `packages:write`),
-> soit un **PAT classic** avec `write:packages` (recommandé via un secret `GITHUB_PACKAGES_TOKEN`).
+> soit un **PAT classic** avec `write:packages` (recommandé via un secret `NPM_PUBLISH_TOKEN`).
 
 ## ✅ État actuel (dans ce repo)
 
