@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 
 import { ModelSelector } from '@cappasoft/openrouter-model-selector'
-import '@cappasoft/openrouter-model-selector/styles.css'
+import '../../../packages/openrouter-model-selector/dist/styles.css'
 
 type Locale = 'en' | 'fr'
 
@@ -15,6 +15,15 @@ export default function App() {
   const [showAllInModal, setShowAllInModal] = useState(true)
   const [infoToggle, setInfoToggle] = useState(true)
   const [highContrast, setHighContrast] = useState(false)
+  const [darkMode, setDarkMode] = useState(false)
+
+  useMemo(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [darkMode])
 
   const masked = useMemo(() => {
     if (!apiKey) return ''
@@ -48,6 +57,10 @@ export default function App() {
           <label className="label checkbox">
             <input type="checkbox" checked={highContrast} onChange={(e) => setHighContrast(e.target.checked)} />
             highContrast
+          </label>
+          <label className="label checkbox">
+            <input type="checkbox" checked={darkMode} onChange={(e) => setDarkMode(e.target.checked)} />
+            darkMode
           </label>
         </div>
       </header>
