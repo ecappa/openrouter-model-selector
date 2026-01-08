@@ -246,273 +246,27 @@ export function ModelSelector({
   ]
 
   if (apiKeyMissing) {
-    return <div className="text-sm text-destructive">{labels.apiKeyRequired}</div>
-  }
-
-  if (error) {
-    return <div className="text-sm text-destructive">Error loading models: {error}</div>
-  }
-
-  const renderFullSelector = () => (
-    <div className={cn("space-y-4 orm-root", contrastClass)}>
-      <div className="space-y-2">
-        {(showSearch || showFilters) && (
-          <div className="space-y-2">
-            {showSearch && (
-              <div className="relative">
-                <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder={labels.searchPlaceholder}
-                  value={searchQuery}
-                  onChange={(e: any) => setSearchQuery(e.target.value)}
-                  className="pl-8 h-8"
-                />
-              </div>
-            )}
-
-            {showFilters && (
-              <div className="space-y-2">
-                <div className="flex flex-wrap gap-1">
-                  {PROVIDER_FILTERS.map((filter) => (
-                    <Button
-                      key={filter.id}
-                      variant={providerFilter === filter.id ? "default" : "outline"}
-                      size="sm"
-                      className={cn("h-6 px-2 text-xs", providerFilter === filter.id && "bg-primary text-primary-foreground")}
-                      onClick={() => setProviderFilter(providerFilter === filter.id ? null : filter.id)}
-                    >
-                      {filter.icon && <span className="mr-1">{filter.icon}</span>}
-                      {filter.label}
-                    </Button>
-                  ))}
-                </div>
-
-                <div className="flex flex-wrap gap-1">
-                  {CAPABILITY_FILTERS.map((filter) => (
-                    <Button
-                      key={filter.id}
-                      variant="outline"
-                      size="sm"
-                      className={cn(
-                        "h-6 px-2 text-xs border",
-                        capabilityFilter === filter.id ? filter.color : "text-foreground/70 orm-text-secondary"
-                      )}
-                      onClick={() => setCapabilityFilter(capabilityFilter === filter.id ? null : filter.id)}
-                    >
-                      {filter.icon}
-                      <span className="ml-1">{filter.label}</span>
-                    </Button>
-                  ))}
-                </div>
-
-                {hasActiveFilters && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 px-2 text-xs text-foreground/70 orm-text-secondary hover:text-foreground"
-                    onClick={clearFilters}
-                  >
-                    <X className="h-3 w-3 mr-1" />
-                    {labels.clearFilters}
-                  </Button>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="h-[400px] overflow-y-auto border rounded-md p-2">
-          {filteredCategories.length === 0 ? (
-            <div className="p-4 text-center text-sm text-foreground/70 orm-text-secondary orm-no-results">{labels.noResults}</div>
-          ) : (
-            filteredCategories.map((category) => (
-              <div key={category.name} className="mb-4 last:mb-0">
-                <div className="px-2 py-1.5 text-xs font-semibold text-foreground/80 orm-section-title bg-muted/50 mb-1 rounded">
-                  {category.name}
-                </div>
-                <div className="grid grid-cols-1 gap-1">
-                  {category.models.map((model) => {
-                    const badge = getModelBadge(model)
-                    const isSelected = value === model.id
-                    return (
-                      <div
-                        key={model.id}
-                        className={cn(
-                          "flex flex-col p-2 rounded-md cursor-pointer transition-colors border",
-                          isSelected ? "bg-primary/10 border-primary" : "hover:bg-muted border-transparent"
-                        )}
-                        onClick={() => {
-                          onValueChange(model.id)
-                          if (showAllInModal) setModalOpen(false)
-                        }}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium text-sm orm-model-name">{model.name}</span>
-                          {badge && (
-                            <span className={cn("text-[10px] px-1.5 py-0.5 rounded-full flex items-center gap-1", badge.color, badge.bgColor)}>
-                              {badge.icon}
-                              {badge.label}
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 text-[10px] text-foreground/70 orm-text-secondary orm-model-desc mt-1">
-                          <span>{formatContextLength(model.context_length)} context</span>
-                          {showPricing && <span>•</span>}
-                          {showPricing && <span>{fmtPrice(model.pricing.prompt)}</span>}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-    </div>
-  )
-
-  if (showAllInModal) {
     return (
-      <div className={cn("space-y-2 orm-root", contrastClass, className)}>
-        <div className="flex items-center gap-2">
-          <Select value={value} onValueChange={onValueChange} disabled={disabled || isLoading}>
-            <SelectTrigger className="flex-1 text-left">
-              {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>{labels.loading}</span>
-                </div>
-              ) : (
-                <SelectValue placeholder={labels.placeholder}>
-                  {selectedModel && (
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="truncate font-medium orm-model-name">{selectedModel.name}</span>
-                      {getModelBadge(selectedModel) && (
-                        <Zap className={cn("h-3 w-3 shrink-0", getModelBadge(selectedModel)!.color.split(" ")[0])} />
-                      )}
-                    </div>
-                  )}
-                </SelectValue>
-              )}
-            </SelectTrigger>
-            <SelectContent>
-              {commonModels?.map((model) => (
-                <SelectItem key={model.id} value={model.id}>
-                  <span className="font-medium orm-model-name">{model.name}</span>
-                </SelectItem>
-              ))}
-              {!commonModels?.length && !isLoading && <div className="p-2 text-xs text-foreground/70 orm-text-secondary">{labels.noResults}</div>}
-            </SelectContent>
-          </Select>
-
-          <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="icon" className="shrink-0" title={labels.showAllModelsTitle}>
-                <Settings2 className="h-4 w-4" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className={cn("max-w-2xl max-h-[85vh] orm-root", contrastClass, "orm-dialog")}>
-              <DialogHeader>
-                <DialogTitle>{labels.libraryTitle}</DialogTitle>
-              </DialogHeader>
-              {renderFullSelector()}
-            </DialogContent>
-          </Dialog>
-
-          {infoToggle && (
-            <Button
-              variant={showInfo ? "default" : "outline"}
-              size="icon"
-              className="shrink-0"
-              onClick={() => setShowInfo(!showInfo)}
-              title={labels.showDetailsTitle}
-            >
-              <Info className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-
-        {infoToggle && showInfo && selectedModel && (
-          <div className="text-xs text-foreground/70 orm-text-secondary p-2 bg-muted/30 rounded-md border mt-2 animate-in slide-in-from-top-1 fade-in duration-200">
-            <div className="font-medium text-foreground mb-1">{labels.modelDetailsTitle}</div>
-            {selectedModel.description ? <p className="mb-2">{selectedModel.description}</p> : <p className="mb-2 italic">{labels.noDescription}</p>}
-            <div className="flex flex-wrap gap-2 text-[10px]">
-              <span className="bg-background border rounded px-1.5 py-0.5">Context: {formatContextLength(selectedModel.context_length)}</span>
-              <span className="bg-background border rounded px-1.5 py-0.5">Input: {fmtPrice(selectedModel.pricing.prompt)}</span>
-              <span className="bg-background border rounded px-1.5 py-0.5">Output: {fmtPrice(selectedModel.pricing.completion)}</span>
-            </div>
-          </div>
-        )}
+      <div className={cn("orm-root", contrastClass)}>
+        <div className={cn("text-sm text-destructive", className)}>{labels.apiKeyRequired}</div>
       </div>
     )
   }
 
-  return (
-    <div className={cn("space-y-2 orm-root", contrastClass, className)}>
-      <Select value={value} onValueChange={onValueChange} disabled={disabled || isLoading}>
-        <SelectTrigger className={cn(variant === "compact" && "h-8 text-sm")}>
-          {isLoading ? (
-            <div className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span>{labels.loading}</span>
-            </div>
-          ) : (
-            <SelectValue placeholder={labels.placeholder}>
-              {selectedModel && (
-                <div className="flex items-center gap-2">
-                  <span className="orm-model-name">{selectedModel.name}</span>
-                  {getModelBadge(selectedModel) && (
-                    <span className={cn("flex items-center gap-0.5 text-xs", getModelBadge(selectedModel)!.color)}>{getModelBadge(selectedModel)!.icon}</span>
-                  )}
-                </div>
-              )}
-            </SelectValue>
-          )}
-        </SelectTrigger>
-        <SelectContent className={cn("max-h-[500px] min-w-[var(--radix-select-trigger-width)] w-full orm-root", contrastClass, "orm-select-content")}>
-          <div className="p-2 border-b space-y-2">
-            <div className="flex items-start justify-between gap-2">
-              <div className="grid w-full gap-1 grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
-                {recommendedModels.map((model) => (
-                  <Button
-                    key={model.id}
-                    size="sm"
-                    variant={value === model.id ? "default" : "outline"}
-                    className="h-8 px-2 text-xs justify-start"
-                    onClick={(e: any) => {
-                      e.stopPropagation()
-                      onValueChange(model.id)
-                    }}
-                  >
-                    <Sparkles className="h-3 w-3 mr-1" />
-                    <span className="truncate">{model.name}</span>
-                  </Button>
-                ))}
-              </div>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-8 w-8"
-                onClick={(e: any) => {
-                  e.stopPropagation()
-                  handleRefresh()
-                }}
-                title={labels.refreshTitle}
-              >
-                {isRefreshing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              </Button>
-            </div>
-            {lastUpdated && (
-              <div className="text-[11px] text-foreground/70 orm-text-secondary orm-last-updated">
-                {labels.lastUpdatedPrefix}{" "}
-                {new Date(lastUpdated).toLocaleTimeString(locale === "fr" ? "fr-FR" : "en-US")}
-              </div>
-            )}
-          </div>
+  if (error) {
+    return (
+      <div className={cn("orm-root", contrastClass)}>
+        <div className={cn("text-sm text-destructive", className)}>Error loading models: {error}</div>
+      </div>
+    )
+  }
 
+  const renderFullSelector = () => (
+    <div className={cn("orm-root", contrastClass)}>
+      <div className="space-y-4">
+        <div className="space-y-2">
           {(showSearch || showFilters) && (
-            <div className="p-2 border-b space-y-2">
+            <div className="space-y-2">
               {showSearch && (
                 <div className="relative">
                   <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -521,8 +275,6 @@ export function ModelSelector({
                     value={searchQuery}
                     onChange={(e: any) => setSearchQuery(e.target.value)}
                     className="pl-8 h-8"
-                    onClick={(e: any) => e.stopPropagation()}
-                    onKeyDown={(e: any) => e.stopPropagation()}
                   />
                 </div>
               )}
@@ -536,10 +288,7 @@ export function ModelSelector({
                         variant={providerFilter === filter.id ? "default" : "outline"}
                         size="sm"
                         className={cn("h-6 px-2 text-xs", providerFilter === filter.id && "bg-primary text-primary-foreground")}
-                        onClick={(e: any) => {
-                          e.stopPropagation()
-                          setProviderFilter(providerFilter === filter.id ? null : filter.id)
-                        }}
+                        onClick={() => setProviderFilter(providerFilter === filter.id ? null : filter.id)}
                       >
                         {filter.icon && <span className="mr-1">{filter.icon}</span>}
                         {filter.label}
@@ -557,10 +306,7 @@ export function ModelSelector({
                           "h-6 px-2 text-xs border",
                           capabilityFilter === filter.id ? filter.color : "text-foreground/70 orm-text-secondary"
                         )}
-                        onClick={(e: any) => {
-                          e.stopPropagation()
-                          setCapabilityFilter(capabilityFilter === filter.id ? null : filter.id)
-                        }}
+                        onClick={() => setCapabilityFilter(capabilityFilter === filter.id ? null : filter.id)}
                       >
                         {filter.icon}
                         <span className="ml-1">{filter.label}</span>
@@ -573,10 +319,7 @@ export function ModelSelector({
                       variant="ghost"
                       size="sm"
                       className="h-6 px-2 text-xs text-foreground/70 orm-text-secondary hover:text-foreground"
-                      onClick={(e: any) => {
-                        e.stopPropagation()
-                        clearFilters()
-                      }}
+                      onClick={clearFilters}
                     >
                       <X className="h-3 w-3 mr-1" />
                       {labels.clearFilters}
@@ -587,52 +330,328 @@ export function ModelSelector({
             </div>
           )}
 
-          <div className="max-h-[300px] overflow-y-auto">
+          <div className="h-[400px] overflow-y-auto border rounded-md p-2">
             {filteredCategories.length === 0 ? (
               <div className="p-4 text-center text-sm text-foreground/70 orm-text-secondary orm-no-results">{labels.noResults}</div>
             ) : (
               filteredCategories.map((category) => (
-                <div key={category.name}>
-                  <div className="px-2 py-1.5 text-xs font-semibold text-foreground/80 orm-section-title bg-muted/50 sticky top-0">
+                <div key={category.name} className="mb-4 last:mb-0">
+                  <div className="px-2 py-1.5 text-xs font-semibold text-foreground/80 orm-section-title bg-muted/50 mb-1 rounded">
                     {category.name}
                   </div>
-                  {category.models.map((model) => {
-                    const badge = getModelBadge(model)
-                    return (
-                      <SelectItem key={model.id} value={model.id} className="py-2">
-                        <div className="flex flex-col gap-0.5">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium orm-model-name">{model.name}</span>
+                  <div className="grid grid-cols-1 gap-1">
+                    {category.models.map((model) => {
+                      const badge = getModelBadge(model)
+                      const isSelected = value === model.id
+                      return (
+                        <div
+                          key={model.id}
+                          className={cn(
+                            "flex flex-col p-2 rounded-md cursor-pointer transition-colors border",
+                            isSelected ? "bg-primary/10 border-primary" : "hover:bg-muted border-transparent"
+                          )}
+                          onClick={() => {
+                            onValueChange(model.id)
+                            if (showAllInModal) setModalOpen(false)
+                          }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium text-sm orm-model-name">{model.name}</span>
                             {badge && (
-                              <span className={cn("flex items-center gap-0.5 text-xs", badge.color)}>
+                              <span className={cn("text-[10px] px-1.5 py-0.5 rounded-full flex items-center gap-1", badge.color, badge.bgColor)}>
                                 {badge.icon}
-                                <span className="hidden sm:inline">{badge.label}</span>
+                                {badge.label}
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-2 text-xs text-foreground/70 orm-text-secondary orm-model-desc">
-                            <span>{formatContextLength(model.context_length)}</span>
-                            {showPricing && (
-                              <>
-                                <span>•</span>
-                                <span>{fmtPrice(model.pricing.prompt)}</span>
-                              </>
-                            )}
+                          <div className="flex items-center gap-2 text-[10px] text-foreground/70 orm-text-secondary orm-model-desc mt-1">
+                            <span>{formatContextLength(model.context_length)} context</span>
+                            {showPricing && <span>•</span>}
+                            {showPricing && <span>{fmtPrice(model.pricing.prompt)}</span>}
                           </div>
                         </div>
-                      </SelectItem>
-                    )
-                  })}
+                      )
+                    })}
+                  </div>
                 </div>
               ))
             )}
           </div>
-        </SelectContent>
-      </Select>
+        </div>
+      </div>
+    </div>
+  )
 
-      {variant === "default" && selectedModel && (
-        <div className="text-xs text-foreground/70 orm-text-secondary">{selectedModel.description && <p className="line-clamp-2">{selectedModel.description}</p>}</div>
-      )}
+  if (showAllInModal) {
+    return (
+      <div className={cn("orm-root", contrastClass)}>
+        <div className={cn("space-y-2", className)}>
+          <div className="flex items-center gap-2">
+            <Select value={value} onValueChange={onValueChange} disabled={disabled || isLoading}>
+              <SelectTrigger className="flex-1 text-left">
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>{labels.loading}</span>
+                  </div>
+                ) : (
+                  <SelectValue placeholder={labels.placeholder}>
+                    {selectedModel && (
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="truncate font-medium orm-model-name">{selectedModel.name}</span>
+                        {getModelBadge(selectedModel) && (
+                          <Zap className={cn("h-3 w-3 shrink-0", getModelBadge(selectedModel)!.color.split(" ")[0])} />
+                        )}
+                      </div>
+                    )}
+                  </SelectValue>
+                )}
+              </SelectTrigger>
+              <SelectContent containerClassName={cn("orm-root", contrastClass)}>
+                {commonModels?.map((model) => (
+                  <SelectItem key={model.id} value={model.id}>
+                    <span className="font-medium orm-model-name">{model.name}</span>
+                  </SelectItem>
+                ))}
+                {!commonModels?.length && !isLoading && <div className="p-2 text-xs text-foreground/70 orm-text-secondary">{labels.noResults}</div>}
+              </SelectContent>
+            </Select>
+
+            <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="icon" className="shrink-0" title={labels.showAllModelsTitle}>
+                  <Settings2 className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent containerClassName={cn("orm-root", contrastClass)} className={cn("max-w-2xl max-h-[85vh] orm-dialog")}>
+                <DialogHeader>
+                  <DialogTitle>{labels.libraryTitle}</DialogTitle>
+                </DialogHeader>
+                {renderFullSelector()}
+              </DialogContent>
+            </Dialog>
+
+            {infoToggle && (
+              <Button
+                variant={showInfo ? "default" : "outline"}
+                size="icon"
+                className="shrink-0"
+                onClick={() => setShowInfo(!showInfo)}
+                title={labels.showDetailsTitle}
+              >
+                <Info className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+
+          {infoToggle && showInfo && selectedModel && (
+            <div className="text-xs text-foreground/70 orm-text-secondary p-2 bg-muted/30 rounded-md border mt-2 animate-in slide-in-from-top-1 fade-in duration-200">
+              <div className="font-medium text-foreground mb-1">{labels.modelDetailsTitle}</div>
+              {selectedModel.description ? <p className="mb-2">{selectedModel.description}</p> : <p className="mb-2 italic">{labels.noDescription}</p>}
+              <div className="flex flex-wrap gap-2 text-[10px]">
+                <span className="bg-background border rounded px-1.5 py-0.5">Context: {formatContextLength(selectedModel.context_length)}</span>
+                <span className="bg-background border rounded px-1.5 py-0.5">Input: {fmtPrice(selectedModel.pricing.prompt)}</span>
+                <span className="bg-background border rounded px-1.5 py-0.5">Output: {fmtPrice(selectedModel.pricing.completion)}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className={cn("orm-root", contrastClass)}>
+      <div className={cn("space-y-2", className)}>
+        <Select value={value} onValueChange={onValueChange} disabled={disabled || isLoading}>
+          <SelectTrigger className={cn(variant === "compact" && "h-8 text-sm")}>
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>{labels.loading}</span>
+              </div>
+            ) : (
+              <SelectValue placeholder={labels.placeholder}>
+                {selectedModel && (
+                  <div className="flex items-center gap-2">
+                    <span className="orm-model-name">{selectedModel.name}</span>
+                    {getModelBadge(selectedModel) && (
+                      <span className={cn("flex items-center gap-0.5 text-xs", getModelBadge(selectedModel)!.color)}>
+                        {getModelBadge(selectedModel)!.icon}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </SelectValue>
+            )}
+          </SelectTrigger>
+          <SelectContent
+            containerClassName={cn("orm-root", contrastClass)}
+            className={cn("max-h-[500px] min-w-[var(--radix-select-trigger-width)] w-full orm-select-content")}
+          >
+            <div className="p-2 border-b space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <div className="grid w-full gap-1 grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
+                  {recommendedModels.map((model) => (
+                    <Button
+                      key={model.id}
+                      size="sm"
+                      variant={value === model.id ? "default" : "outline"}
+                      className="h-8 px-2 text-xs justify-start"
+                      onClick={(e: any) => {
+                        e.stopPropagation()
+                        onValueChange(model.id)
+                      }}
+                    >
+                      <Sparkles className="h-3 w-3 mr-1" />
+                      <span className="truncate">{model.name}</span>
+                    </Button>
+                  ))}
+                </div>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  onClick={(e: any) => {
+                    e.stopPropagation()
+                    handleRefresh()
+                  }}
+                  title={labels.refreshTitle}
+                >
+                  {isRefreshing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                </Button>
+              </div>
+              {lastUpdated && (
+                <div className="text-[11px] text-foreground/70 orm-text-secondary orm-last-updated">
+                  {labels.lastUpdatedPrefix}{" "}
+                  {new Date(lastUpdated).toLocaleTimeString(locale === "fr" ? "fr-FR" : "en-US")}
+                </div>
+              )}
+            </div>
+
+            {(showSearch || showFilters) && (
+              <div className="p-2 border-b space-y-2">
+                {showSearch && (
+                  <div className="relative">
+                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder={labels.searchPlaceholder}
+                      value={searchQuery}
+                      onChange={(e: any) => setSearchQuery(e.target.value)}
+                      className="pl-8 h-8"
+                      onClick={(e: any) => e.stopPropagation()}
+                      onKeyDown={(e: any) => e.stopPropagation()}
+                    />
+                  </div>
+                )}
+
+                {showFilters && (
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap gap-1">
+                      {PROVIDER_FILTERS.map((filter) => (
+                        <Button
+                          key={filter.id}
+                          variant={providerFilter === filter.id ? "default" : "outline"}
+                          size="sm"
+                          className={cn("h-6 px-2 text-xs", providerFilter === filter.id && "bg-primary text-primary-foreground")}
+                          onClick={(e: any) => {
+                            e.stopPropagation()
+                            setProviderFilter(providerFilter === filter.id ? null : filter.id)
+                          }}
+                        >
+                          {filter.icon && <span className="mr-1">{filter.icon}</span>}
+                          {filter.label}
+                        </Button>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-wrap gap-1">
+                      {CAPABILITY_FILTERS.map((filter) => (
+                        <Button
+                          key={filter.id}
+                          variant="outline"
+                          size="sm"
+                          className={cn(
+                            "h-6 px-2 text-xs border",
+                            capabilityFilter === filter.id ? filter.color : "text-foreground/70 orm-text-secondary"
+                          )}
+                          onClick={(e: any) => {
+                            e.stopPropagation()
+                            setCapabilityFilter(capabilityFilter === filter.id ? null : filter.id)
+                          }}
+                        >
+                          {filter.icon}
+                          <span className="ml-1">{filter.label}</span>
+                        </Button>
+                      ))}
+                    </div>
+
+                    {hasActiveFilters && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2 text-xs text-foreground/70 orm-text-secondary hover:text-foreground"
+                        onClick={(e: any) => {
+                          e.stopPropagation()
+                          clearFilters()
+                        }}
+                      >
+                        <X className="h-3 w-3 mr-1" />
+                        {labels.clearFilters}
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="max-h-[300px] overflow-y-auto">
+              {filteredCategories.length === 0 ? (
+                <div className="p-4 text-center text-sm text-foreground/70 orm-text-secondary orm-no-results">{labels.noResults}</div>
+              ) : (
+                filteredCategories.map((category) => (
+                  <div key={category.name}>
+                    <div className="px-2 py-1.5 text-xs font-semibold text-foreground/80 orm-section-title bg-muted/50 sticky top-0">
+                      {category.name}
+                    </div>
+                    {category.models.map((model) => {
+                      const badge = getModelBadge(model)
+                      return (
+                        <SelectItem key={model.id} value={model.id} className="py-2">
+                          <div className="flex flex-col gap-0.5">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium orm-model-name">{model.name}</span>
+                              {badge && (
+                                <span className={cn("flex items-center gap-0.5 text-xs", badge.color)}>
+                                  {badge.icon}
+                                  <span className="hidden sm:inline">{badge.label}</span>
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-foreground/70 orm-text-secondary orm-model-desc">
+                              <span>{formatContextLength(model.context_length)}</span>
+                              {showPricing && (
+                                <>
+                                  <span>•</span>
+                                  <span>{fmtPrice(model.pricing.prompt)}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </SelectItem>
+                      )
+                    })}
+                  </div>
+                ))
+              )}
+            </div>
+          </SelectContent>
+        </Select>
+
+        {variant === "default" && selectedModel && (
+          <div className="text-xs text-foreground/70 orm-text-secondary">{selectedModel.description && <p className="line-clamp-2">{selectedModel.description}</p>}</div>
+        )}
+      </div>
     </div>
   )
 }
