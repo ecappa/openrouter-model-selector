@@ -71,6 +71,54 @@ You can also override the exposed CSS variables (scoped to `.orm-root`):
 }
 ```
 
+## CSS Isolation
+
+This component uses **CSS isolation** to prevent style leaks into your application. All Tailwind classes are scoped to `.orm-root`, ensuring that:
+
+- ✅ The component's styles don't affect your app (shadcn, etc.)
+- ✅ Your app's global styles don't affect the component
+- ✅ Portals (Select dropdowns, Dialogs) are properly scoped
+
+### How it works
+
+1. **Root wrapper**: The component automatically wraps itself with `.orm-root`
+2. **Tailwind scoping**: All generated Tailwind utilities are prefixed with `.orm-root` (e.g., `.orm-root .flex`, `.orm-root .text-sm`)
+3. **Portal wrapping**: Select and Dialog portals are wrapped with `.orm-root` to maintain isolation
+
+### Double wrapping
+
+In some cases (e.g., `showAllInModal`), you may see `.orm-root` appear multiple times in the DOM:
+
+```html
+<div class="orm-root">          <!-- Main wrapper -->
+  <div class="orm-root">        <!-- Portal wrapper -->
+    <SelectContent>...</SelectContent>
+  </div>
+</div>
+```
+
+This is **intentional and safe**. The redundant wrappers ensure robust isolation even when portals are rendered outside the React tree.
+
+### Z-index conflicts
+
+If you experience z-index conflicts with your app (e.g., navbar, modals), you can add CSS isolation:
+
+```css
+.orm-root {
+  isolation: isolate;
+}
+```
+
+This creates a new stacking context and prevents z-index conflicts.
+
+### Overriding styles
+
+Your `className` prop is applied to the **content** (not the root wrapper), so it has priority over internal styles:
+
+```tsx
+<ModelSelector className="text-lg" /> {/* Overrides internal text-sm */}
+```
+
 ## Use cases (Playground)
 
 ### 1) API key from env (Vite)
