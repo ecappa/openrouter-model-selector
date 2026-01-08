@@ -10,33 +10,33 @@
    */
   .orm-root {
     /* Variables internes du composant avec fallback */
-    --orm-background: var(--popover, var(--background, #ffffff));
-    --orm-foreground: var(--popover-foreground, var(--foreground, #0f172a));
-    --orm-border: var(--border, #e2e8f0);
-    --orm-input: var(--input, #e2e8f0);
-    --orm-ring: var(--ring, #6366f1);
-    --orm-primary: var(--primary, #6366f1);
-    --orm-primary-foreground: var(--primary-foreground, #ffffff);
-    --orm-secondary: var(--secondary, #f1f5f9);
-    --orm-secondary-foreground: var(--secondary-foreground, #0f172a);
-    --orm-muted: var(--muted, #f1f5f9);
-    --orm-muted-foreground: var(--muted-foreground, #64748b);
-    --orm-accent: var(--accent, #f1f5f9);
-    --orm-accent-foreground: var(--accent-foreground, #0f172a);
-    --orm-destructive: var(--destructive, #ef4444);
-    --orm-destructive-foreground: var(--destructive-foreground, #ffffff);
+    /* Fallbacks utilisent HSL pour meilleure accessibilité WCAG */
+    --orm-background: var(--popover, var(--background, hsl(0, 0%, 100%)));
+    --orm-foreground: var(--popover-foreground, var(--foreground, hsl(222, 47%, 11%)));
+    --orm-border: var(--border, hsl(214, 32%, 91%));
+    --orm-input: var(--input, hsl(214, 32%, 91%));
+    --orm-ring: var(--ring, hsl(243, 75%, 59%));
+    --orm-primary: var(--primary, hsl(243, 75%, 59%));
+    --orm-primary-foreground: var(--primary-foreground, hsl(0, 0%, 100%));
+    --orm-secondary: var(--secondary, hsl(210, 40%, 96%));
+    --orm-secondary-foreground: var(--secondary-foreground, hsl(222, 47%, 11%));
+    --orm-muted: var(--muted, hsl(210, 40%, 96%));
+    --orm-muted-foreground: var(--muted-foreground, hsl(215, 16%, 47%));
+    --orm-accent: var(--accent, hsl(210, 40%, 96%));
+    --orm-accent-foreground: var(--accent-foreground, hsl(222, 47%, 11%));
+    /* Destructive avec meilleur contraste pour accessibilité */
+    --orm-destructive: var(--destructive, hsl(0, 72%, 51%));
+    --orm-destructive-foreground: var(--destructive-foreground, hsl(0, 0%, 100%));
     --orm-radius: var(--radius, 0.5rem);
 
     /* Mappings for legacy/component specific vars */
     --orm-text-primary: var(--orm-foreground);
     --orm-text-secondary: var(--orm-muted-foreground);
-    --orm-text-muted: var(--orm-muted-foreground);
   }
 
   /* Higher contrast for prices/metadata (WCAG-friendly) */
   .orm-contrast-high {
     --orm-text-secondary: var(--orm-foreground);
-    --orm-text-muted: var(--orm-secondary-foreground);
   }
 }
 
